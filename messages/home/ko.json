@@ -1,0 +1,9 @@
+{
+  "title": "무한 원숭이 정리",
+  "description": "원숭이들이 무작위로 타자를 칩니다. 3글자를 칠 때마다 3골드를 획득합니다. 골드를 모아 더 많은 원숭이를 고용하세요!",
+  "gold": "{amount} 🪙",
+  "buy_monkey": "원숭이 고용하기 (비용: {cost} 🪙)",
+  "workforce": "나의 작업장",
+  "monkeys_count": "{count} 마리",
+  "typist": "Lv.1 타이피스트"
+}

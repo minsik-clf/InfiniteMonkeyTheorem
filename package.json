@@ -1,0 +1,59 @@
+{
+  "name": "infinite-monkey-theorem",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "predev": "node generate-env.mjs",
+    "dev": "next dev",
+    "prebuild": "node generate-env.mjs",
+    "build:next": "next build",
+    "build:worker": "npx @opennextjs/cloudflare build --skipNextBuild",
+    "build": "npm run build:next && npm run build:worker",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "@tanstack/react-query": "^5.90.16",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.562.0",
+    "next": "15.4.10",
+    "next-intl": "^4.7.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-easy-crop": "^5.5.6",
+    "react-swm-icon-pack": "^1.0.14",
+    "tailwind-merge": "^3.4.0",
+    "wasm-image-optimization": "^1.4.3",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.8",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.10",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "prettier": "^3.7.4",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^5",
+    "wrangler": "^4.57.0"
+  }
+}

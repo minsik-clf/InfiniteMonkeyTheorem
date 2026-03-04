@@ -1,0 +1,70 @@
+{
+  "loading": "Loading...",
+  "error": "An error occurred",
+  "success": "Success",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "close": "Close",
+  "logout": "Logout",
+  "extract": "Extract",
+  "clear": "Clear",
+  "zoom": "Zoom",
+  "cropImage": "Crop Image",
+  "cropProfilePicture": "Crop Profile Picture",
+  "cropCoverPicture": "Crop Cover Picture",
+  "updateProfilePicture": "Update Profile Picture",
+  "updateCoverPicture": "Update Cover Picture",
+  "selectImage": "Select Image",
+  "addToCart": "Add to Cart",
+  "inCart": "In Cart",
+  "share": "Share",
+  "use": "Use",
+  "copy": "Copy",
+  "copied": "Copied!",
+  "group": "Group",
+  "emptyCart": "No characters in cart. Add characters and extract to use them.",
+  "character": "Character",
+  "characters": "Characters",
+  "editProfile": {
+    "title": "Edit Profile",
+    "nickname": "Nickname",
+    "username": "Username",
+    "bio": "Bio",
+    "namePlaceholder": "Character Name",
+    "save": "Save",
+    "validation": {
+      "nickname": {
+        "required": "Nickname is required",
+        "length": "Nickname must be 2-32 characters"
+      },
+      "username": {
+        "required": "Username is required",
+        "length": "Username must be 4-16 characters",
+        "characters": "Only lowercase letters, numbers, and underscores allowed",
+        "notAvailable": "This username is already taken"
+      },
+      "bio": {
+        "maxLength": "Bio must not exceed 500 characters"
+      }
+    }
+  },
+  "feed": {
+    "emptyCreated": "No characters created yet.",
+    "emptyLikes": "No liked characters yet.",
+    "empty": "No characters found."
+  },
+  "saveAvatar": {
+    "title": "Save Character",
+    "namePlaceholder": "Character Name",
+    "privateToggle": "Private",
+    "confirmButton": "Save"
+  },
+  "tooltip": {
+    "dailyCredit": "Daily Credit",
+    "paidCredit": "Paid Credit",
+    "freeAndDaily": "Free Credit: {free} / Daily Credit: {daily}"
+  }
+}
