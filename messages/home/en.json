@@ -1,9 +1,4 @@
 {
   "title": "Infinite Monkey Theorem",
-  "description": "Monkeys type random characters. Every 3 characters typed gives you 3 gold. Buy more monkeys to earn more!",
-  "gold": "{amount} 🪙",
-  "buy_monkey": "Buy Monkey (Cost: {cost} 🪙)",
-  "workforce": "Your Workforce",
-  "monkeys_count": "{count} Monkeys",
-  "typist": "Lv.1 Typist"
+  "description": "An idle game where monkeys randomly type to complete target strings"
 }

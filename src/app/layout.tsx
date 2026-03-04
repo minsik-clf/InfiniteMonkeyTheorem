@@ -56,12 +56,12 @@ export default async function RootLayout({
   const locale = (await getLocale()) as Locale;
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className="dark">
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
       />
-      <body className="antialiased bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+      <body className="antialiased bg-background text-foreground">
         <GoogleAnalytics />
         <NextIntlClientProvider messages={messages}>
           <AppLayoutWrapper>
