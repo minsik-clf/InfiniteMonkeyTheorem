@@ -1,0 +1,88 @@
+# Infinite Monkey Theorem — Cursor Rules
+
+이 문서는 TypeScript/Next.js 프로젝트의 코딩·커밋·브랜치·테스트 규칙을 정의합니다. AI 어시스턴트와 개발자 모두 이 규칙을 따릅니다.
+
+---
+
+## 1. 프로젝트 컨텍스트
+
+- **스택**: Next.js 15 (App Router), TypeScript (strict), Tailwind CSS v4, Zustand, next-intl, Cloudflare Workers
+- **Node**: >= 22.0.0
+- **경로 별칭**: `@/*` → `./src/*`, `@/components/*`, `@/utils/*` (tsconfig paths와 동일하게 사용)
+
+---
+
+## 2. TypeScript & 코드 스타일
+
+- **strict 모드 유지**: `strict: true` 기준으로 작성. `any` 사용 금지 (`@typescript-eslint/no-explicit-any`).
+- **멤버 접근 제어**: 클래스/인터페이스 멤버는 `public`/`private`/`protected`를 명시 (`@typescript-eslint/explicit-member-accessibility`).
+- **미사용 변수**: 사용하지 않는 인자/변수는 `_` 접두사 (예: `_unused`). 미사용 import는 제거 (`unused-imports/no-unused-imports`).
+- **Promise**: floating promise 금지. `void` 처리 또는 `await`/`.catch()` 명시 (`@typescript-eslint/no-floating-promises`).
+- **Import 순서**: ESLint `import/order` 준수 — 그룹 순서(builtin → external → internal → parent → sibling → index), 그룹 간 빈 줄, 알파벳 오름차순, `@/**`는 internal.
+- **순환 참조**: `import/no-cycle` 오류 없도록 모듈 의존성 일방향 유지.
+- **포맷**: Prettier 설정 준수 — singleQuote, printWidth 80, tabWidth 2, semi, trailingComma es5, LF. 커밋 전 `npm run format` 및 `npm run lint` 통과.
+
+---
+
+## 3. React & Next.js
+
+- 함수형 컴포넌트만 사용. 훅/유틸은 재사용 가능하게 분리.
+- 클라이언트 컴포넌트는 필요한 최소 범위에 `"use client"` 적용.
+- next-intl: `messages/**` JSON 구조 유지, 키는 영문 스네이크 또는 일관된 네이밍.
+- 이미지: Cloudflare Workers 제약으로 `next/image` 최적화 비활성화됨 — `no-img-element` off 상태이므로 `<img>` 사용 시 접근성(alt 등) 준수.
+
+---
+
+## 4. 브랜치 규칙
+
+- **기본 브랜치**: `main` — 배포 가능한 상태만 유지.
+- **작업 브랜치 네이밍**:
+  - `feature/<기능명>` — 새 기능 (예: `feature/achievement-system`)
+  - `fix/<이슈-또는-요약>` — 버그 수정 (예: `fix/gold-rounding`)
+  - `chore/<작업내용>` — 빌드/설정/문서 등 (예: `chore/upgrade-deps`)
+  - `refactor/<대상>` — 리팩터링 전용 (예: `refactor/game-store`)
+- **규칙**:
+  - `main`에서 분기해서 작업. 오래된 브랜치일 경우 먼저 `main`을 pull rebase 후 작업.
+  - PR/머지 전에 로컬에서 `npm run build`, `npm run lint`, `npm run format:check` 통과.
+  - 머지 시 불필요한 커밋 메시지/스쿼시는 팀 정책에 따라 정리.
+
+---
+
+## 5. 커밋 & 푸시 규칙
+
+- **커밋 메시지**: Conventional Commits 권장.
+  - `feat: ...` — 새 기능
+  - `fix: ...` — 버그 수정
+  - `chore: ...` — 빌드/설정/문서/의존성
+  - `refactor: ...` — 동작 변경 없는 코드 변경
+  - `style: ...` — 포맷/스타일만 (기능 변경 없음)
+  - `test: ...` — 테스트 추가/수정
+  - 본문에 “왜” 변경했는지 한 줄이라도 적는 것을 권장.
+- **푸시 전 체크리스트**:
+  1. `npm run lint` 통과
+  2. `npm run format:check` 통과 (또는 `npm run format` 후 커밋)
+  3. `npm run build` 통과
+  4. (테스트 도입 시) `npm run test` 및 필요 시 `npm run test:coverage` 통과
+- **푸시 주기**: 논리적 단위(한 가지 feat/fix/chore)마다 커밋 후 푸시. `main`에 직접 푸시하지 않고 브랜치 푸시 후 PR 머지 원칙.
+
+---
+
+## 6. 테스트 규칙
+
+- **도입 시 권장 스택**: Vitest(단위/통합), React Testing Library(컴포넌트). E2E는 Playwright 등 필요 시 별도 도입.
+- **위치**: 단위/훅 테스트는 소스와 같은 디렉터리 또는 `src/**/__tests__/`, 파일명 `*.test.ts` / `*.test.tsx` / `*.spec.ts(x)`.
+- **작성 원칙**:
+  - 퍼블릭 API(export된 함수, 컴포넌트 props, 스토어 액션)에 대해 테스트 작성 우선.
+  - 순수 함수/유틸(예: `getMonkeyCostSingle`, `getBulkCost`, `format.ts`)은 반드시 단위 테스트 대상.
+  - Zustand 스토어: 액션과 파생 상태는 모킹 최소화하고 통합 테스트로 검증 권장.
+  - 컴포넌트: 사용자 동작(클릭, 입력)과 보이는 결과 위주로 RTL로 작성. 구현 디테일보다 행동 어서션.
+- **네이밍**: `describe('모듈/컴포넌트명')`, `it('기대 동작을 설명하는 문장')` (한글 가능).
+- **실행**: `npm run test` (watch는 `npm run test:watch` 등 스크립트 추가 시). CI에서는 단일 실행 + 커버리지 리포터.
+- **커버리지**: 목표는 팀 합의 후 설정. 신규 코드는 가능한 한 커버리지 유지 또는 상향.
+
+---
+
+## 7. 기타
+
+- **환경 변수**: `generate-env.mjs`로 생성되는 값 사용. 시크릿/키는 저장소에 올리지 않음.
+- **번들/배포**: Next 빌드 후 `@opennextjs/cloudflare`로 Worker 빌드. `wrangler.toml` 설정 변경 시 문서화 또는 주석 유지.
