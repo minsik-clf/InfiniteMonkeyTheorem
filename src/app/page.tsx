@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { MISSIONS } from '@/config/missions';
 import { useGameLoop } from '@/hooks/useGameLoop';
 import { formatNumber } from '@/lib/format';
+import { playMonkeySuccessSound } from '@/lib/sounds';
 import {
   useGameStore,
   getPurchaseUnit,
@@ -19,6 +20,10 @@ function CelebrationOverlay({
   missionName: string;
   onDismiss: () => void;
 }) {
+  useEffect(() => {
+    playMonkeySuccessSound();
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(onDismiss, 2500);
     return () => clearTimeout(timer);
