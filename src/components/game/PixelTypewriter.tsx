@@ -2,7 +2,10 @@
 
 export function PixelTypewriter() {
   return (
-    <div className="relative" style={{ width: 64, height: 40, imageRendering: 'pixelated' }}>
+    <div
+      className="relative"
+      style={{ width: 64, height: 40, imageRendering: 'pixelated' }}
+    >
       {/* Base */}
       <div
         className="absolute"
@@ -67,15 +70,33 @@ export function PixelTypewriter() {
       {/* Text lines on paper */}
       <div
         className="absolute"
-        style={{ bottom: 34, left: 22, width: 20, height: 1, background: 'hsl(220, 20%, 30%)' }}
+        style={{
+          bottom: 34,
+          left: 22,
+          width: 20,
+          height: 1,
+          background: 'hsl(220, 20%, 30%)',
+        }}
       />
       <div
         className="absolute"
-        style={{ bottom: 31, left: 22, width: 16, height: 1, background: 'hsl(220, 20%, 30%)' }}
+        style={{
+          bottom: 31,
+          left: 22,
+          width: 16,
+          height: 1,
+          background: 'hsl(220, 20%, 30%)',
+        }}
       />
       <div
         className="absolute"
-        style={{ bottom: 28, left: 22, width: 18, height: 1, background: 'hsl(220, 20%, 30%)' }}
+        style={{
+          bottom: 28,
+          left: 22,
+          width: 18,
+          height: 1,
+          background: 'hsl(220, 20%, 30%)',
+        }}
       />
     </div>
   );
