@@ -1,0 +1,184 @@
+/* 도트 스타일 테마 - 어두운 톤 */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+  background-color: #0d1117 !important;
+  color: #e6edf3 !important;
+  font-family: 'Press Start 2P', cursive !important;
+}
+
+.game-container {
+  background-color: #0d1117 !important;
+  color: #e6edf3 !important;
+  font-family: 'Press Start 2P', cursive !important;
+  background-image:
+    linear-gradient(rgba(48, 54, 61, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48, 54, 61, 0.3) 1px, transparent 1px) !important;
+  background-size: 16px 16px !important;
+}
+
+.info-bar {
+  background-color: #0d1117 !important;
+  border-bottom: 2px solid #30363d !important;
+}
+
+.info-label {
+  color: #7d8590 !important;
+}
+
+.info-value {
+  color: #e6edf3 !important;
+}
+
+.gold-value {
+  color: #f0b232 !important;
+}
+
+.gps-value {
+  color: #3fb950 !important;
+}
+
+.reset-button {
+  background-color: #1c2128 !important;
+  border: 2px solid #30363d !important;
+  border-radius: 0 !important;
+  box-shadow: 2px 2px 0 #0d1117 !important;
+}
+
+.mission-panel {
+  background-color: #161b22 !important;
+  border: 2px solid #30363d !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 #0d1117 !important;
+}
+
+.mission-number {
+  color: #f0b232 !important;
+}
+
+.mission-label {
+  color: #7d8590 !important;
+}
+
+.mission-target {
+  color: #e6edf3 !important;
+}
+
+.mission-meta {
+  color: #7d8590 !important;
+}
+
+.mission-final {
+  background-color: #f85149 !important;
+  border: 1px solid #0d1117 !important;
+}
+
+.results-panel {
+  background-color: #161b22 !important;
+  border: 2px solid #30363d !important;
+  box-shadow: 4px 4px 0 #0d1117 !important;
+}
+
+.results-title {
+  color: #3fb950 !important;
+}
+
+.results-count,
+.results-empty {
+  color: #7d8590 !important;
+}
+
+.monkey-bubble {
+  background-color: #1c2128 !important;
+  border: 2px solid #30363d !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 #0d1117 !important;
+}
+
+.monkey-bubble::after {
+  border-top-color: #1c2128 !important;
+}
+
+.floating-reward {
+  color: #f0b232 !important;
+}
+
+.monkey-batch-badge {
+  background-color: #f0b232 !important;
+  color: #0d1117 !important;
+  border: 1px solid #0d1117 !important;
+  border-radius: 0 !important;
+  box-shadow: 2px 2px 0 #0d1117 !important;
+}
+
+.char-match {
+  color: #3fb950 !important;
+}
+
+.char-miss {
+  color: #e6edf3 !important;
+}
+
+.char-empty {
+  color: #7d8590 !important;
+}
+
+.control-area {
+  background-color: #0d1117 !important;
+  border-top: 2px solid #30363d !important;
+}
+
+.progress-bar {
+  background-color: #1c2128 !important;
+  border: 2px solid #30363d !important;
+}
+
+.progress-fill {
+  background-color: #f0b232 !important;
+}
+
+.progress-text {
+  color: #7d8590 !important;
+}
+
+.buy-button {
+  border: 2px solid #30363d !important;
+  border-radius: 0 !important;
+}
+
+.buy-active {
+  background-color: #f0b232 !important;
+  color: #0d1117 !important;
+  border-color: #0d1117 !important;
+  box-shadow: 4px 4px 0 #0d1117 !important;
+}
+
+.buy-active:hover {
+  box-shadow: 2px 2px 0 #0d1117 !important;
+}
+
+.buy-disabled {
+  background-color: #1c2128 !important;
+  color: #7d8590 !important;
+  border-color: #30363d !important;
+}
+
+.loading-screen {
+  color: #7d8590 !important;
+}
+
+.celebration-title {
+  color: #3fb950 !important;
+}
+
+.celebration-target {
+  color: #f0b232 !important;
+}
+
+.celebration-sub {
+  color: #7d8590 !important;
+}
+
+.monkey-grid::-webkit-scrollbar-thumb {
+  background: #30363d !important;
+}

@@ -1,7 +1,9 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
+import { Press_Start_2P } from 'next/font/google';
 
 import './globals.css';
+import './pixel-theme.css';
 import GoogleAnalytics from '@/components/common/GoogleAnalytics';
 import AppLayoutWrapper from '@/components/layout/AppLayoutWrapper';
 import { Shell } from '@/components/layout/Shell';
@@ -9,6 +11,13 @@ import { type Locale } from '@/i18n';
 
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+
+const pressStart2p = Press_Start_2P({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-pixel',
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = (await getLocale()) as Locale;
@@ -61,7 +70,9 @@ export default async function RootLayout({
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
       />
-      <body className="antialiased bg-background text-foreground">
+      <body
+        className={`${pressStart2p.variable} ${pressStart2p.className} antialiased bg-background text-foreground`}
+      >
         <GoogleAnalytics />
         <NextIntlClientProvider messages={messages}>
           <AppLayoutWrapper>

@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
+import { PixelMonkey, type TypedShape } from '@/components/game/PixelMonkey';
+import { PixelTypewriter } from '@/components/game/PixelTypewriter';
 import { MISSIONS } from '@/config/missions';
 import { useGameLoop } from '@/hooks/useGameLoop';
 import { formatNumber } from '@/lib/format';
@@ -63,62 +65,40 @@ function MonkeyCard({
   target: string;
   typingProgress: number;
 }) {
-  const displayLength = target.length;
-  // Use id parts for pseudo-random delay
-  const monkeyIndex = parseInt(monkey.id.split('-')[1] || '0');
-  const animationDelay = `${(monkeyIndex % 5) * 0.2}s`;
-
-  const getMonkeyHue = (batchSize: number) => {
-    if (batchSize === 1) return 0;
-    if (batchSize < 10) return 45; // bronze/goldish
-    if (batchSize < 100) return 180; // cyan
-    if (batchSize < 1000) return 270; // purple
-    return 320; // pink/magenta
-  };
-
   const currentChars = monkey.showReward
     ? monkey.targetString
     : monkey.targetString.slice(0, typingProgress);
 
+  const typedShapes: TypedShape[] = Array.from({ length: currentChars.length }).map(
+    (_, i) => {
+      const isMatch = currentChars[i] === target[i];
+      return {
+        shape: isMatch ? ('match' as const) : ('miss' as const),
+        symbol: currentChars[i],
+      };
+    }
+  );
+
+  const typing = !monkey.showReward && typingProgress < target.length;
+
   return (
-    <div className="monkey-card">
-      <div className="monkey-bubble font-mono">
-        {monkey.showReward && monkey.earnedGold > 0 && (
-          <div className="floating-reward">
-            +{formatNumber(monkey.earnedGold)}G
-          </div>
-        )}
-        {Array.from({ length: displayLength }).map((_, i) => {
-          if (i < currentChars.length) {
-            const isMatch = currentChars[i] === target[i];
-            return (
-              <span key={i} className={isMatch ? 'char-match' : 'char-miss'}>
-                {currentChars[i]}
-              </span>
-            );
-          }
-          return (
-            <span key={i} className="char-empty">
-              _
-            </span>
-          );
-        })}
-      </div>
+    <div className="monkey-card relative">
+      {/* 원숭이 (위) + 타이핑 표시 */}
       <div className="monkey-icon-wrapper">
-        <div
-          className="monkey-icon"
-          style={{
-            animationDelay,
-            filter: `hue-rotate(${getMonkeyHue(monkey.batchSize)}deg)`,
-          }}
-        >
-          🐒
-        </div>
+        <PixelMonkey
+          typing={typing}
+          typedShapes={typedShapes}
+          earnedGold={monkey.showReward ? monkey.earnedGold : undefined}
+        />
         {monkey.batchSize > 1 && (
           <div className="monkey-batch-badge font-mono">
             x{formatNumber(monkey.batchSize)}
           </div>
         )}
+      </div>
+      {/* 타자기 (아래, 원숭이 바로 앞) */}
+      <div className="flex justify-center">
+        <PixelTypewriter />
       </div>
     </div>
   );
@@ -144,8 +124,24 @@ function MissionProgressBar({
   );
 }
 
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 3;
+const ZOOM_SENSITIVITY = 0.002;
+
+function getTouchDistance(touches: TouchList): number {
+  if (touches.length < 2) return 0;
+  const a = touches[0];
+  const b = touches[1];
+  return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+}
+
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(0.5);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+  const pinchStart = useRef({ distance: 0, scale: 1 });
 
   const gold = useGameStore((s) => s.gold);
   const monkeyCount = useGameStore((s) => s.monkeyCount);
@@ -176,9 +172,90 @@ export default function Home() {
     }
   }, [resetGame]);
 
+  const onPanStart = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
+      if ('touches' in e && e.touches.length === 2) {
+        pinchStart.current = {
+          distance: getTouchDistance(e.touches),
+          scale,
+        };
+        return;
+      }
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      setIsDragging(true);
+      dragStart.current = { x: clientX, y: clientY, panX: pan.x, panY: pan.y };
+    },
+    [pan.x, pan.y, scale]
+  );
+  const onPanMove = useCallback(
+    (e: MouseEvent | TouchEvent) => {
+      if ('touches' in e && e.touches.length === 2) {
+        const dist = getTouchDistance(e.touches);
+        if (pinchStart.current.distance > 0) {
+          const ratio = dist / pinchStart.current.distance;
+          const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pinchStart.current.scale * ratio));
+          setScale(next);
+        }
+        return;
+      }
+      if (!isDragging) return;
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      setPan({
+        x: dragStart.current.panX + clientX - dragStart.current.x,
+        y: dragStart.current.panY + clientY - dragStart.current.y,
+      });
+    },
+    [isDragging]
+  );
+  const onPanEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+  useEffect(() => {
+    if (!isDragging) return;
+    window.addEventListener('mousemove', onPanMove);
+    window.addEventListener('mouseup', onPanEnd);
+    window.addEventListener('touchmove', onPanMove, { passive: true });
+    window.addEventListener('touchend', onPanEnd);
+    return () => {
+      window.removeEventListener('mousemove', onPanMove);
+      window.removeEventListener('mouseup', onPanEnd);
+      window.removeEventListener('touchmove', onPanMove);
+      window.removeEventListener('touchend', onPanEnd);
+    };
+  }, [isDragging, onPanMove, onPanEnd]);
+
+  const viewportRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      const el = viewportRef.current;
+      if (!el || !el.contains(e.target as Node)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setScale((s) => {
+        const delta = -e.deltaY * ZOOM_SENSITIVITY;
+        return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, s + delta * s));
+      });
+    };
+    document.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    return () => document.removeEventListener('wheel', onWheel, { capture: true });
+  }, []);
+
+  const pixelContainerStyle: React.CSSProperties = {
+    backgroundColor: '#0d1117',
+    color: '#e6edf3',
+    fontFamily: '"Press Start 2P", cursive',
+    backgroundImage: `
+      linear-gradient(rgba(48,54,61,0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(48,54,61,0.3) 1px, transparent 1px)
+    `,
+    backgroundSize: '16px 16px',
+  };
+
   if (!mounted) {
     return (
-      <div className="game-container">
+      <div className="game-container" style={pixelContainerStyle}>
         <div className="loading-screen font-mono">Loading...</div>
       </div>
     );
@@ -191,7 +268,7 @@ export default function Home() {
   const canBuy = gold >= cost;
 
   return (
-    <div className="game-container">
+    <div ref={viewportRef} className="game-container" style={pixelContainerStyle}>
       {/* Top Info Bar */}
       <header className="info-bar">
         <div className="info-item gold-display">
@@ -227,39 +304,21 @@ export default function Home() {
         </button>
       </header>
 
-      {/* Center Main Area */}
-      <main className="main-area">
-        {/* Mission Display */}
-        <section className="mission-panel">
-          <div className="mission-header">
-            <span className="mission-number font-mono">
-              MISSION #{mission.id}
-            </span>
-            {isLastMission && currentMissionIndex > 0 && (
-              <span className="mission-final">FINAL</span>
-            )}
-          </div>
-          <div className="mission-label">TARGET</div>
-          <div className="mission-target font-mono">{mission.target}</div>
-          <div className="mission-meta">
-            <span>
-              Pool: {mission.charPool.length === 3 ? '○△□' : 'A-Z'} (
-              {mission.charPool.length}종)
-            </span>
-            <span>길이: {mission.target.length}자</span>
-            <span>글자당: {formatNumber(mission.goldPerMatch)}G</span>
-          </div>
-        </section>
-
-        {/* Typing Results - Monkey Grid */}
-        <section className="results-panel">
-          <div className="results-header">
-            <span className="results-title font-mono">&gt; WORKFORCE</span>
-            <span className="results-count font-mono">
-              {visualMonkeys.length} monkeys
-            </span>
-          </div>
-          <div className="monkey-grid">
+      {/* Center: 전체 화면 원숭이 그리드 (드래그·스크롤 줌) */}
+      <main
+        className="main-viewport"
+        onMouseDown={onPanStart}
+        onTouchStart={onPanStart}
+      >
+        {/* 배경: 원숭이 그리드 (드래그 패닝 + 스크롤/핀치 줌) */}
+        <div
+          className="world-layer"
+          style={{
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
+          }}
+          role="presentation"
+        >
+          <div className="monkey-grid monkey-grid-background">
             {visualMonkeys.length === 0 ? (
               <div className="results-empty font-mono">
                 Waiting for typing...
@@ -275,6 +334,34 @@ export default function Home() {
               ))
             )}
           </div>
+        </div>
+
+        {/* 플로팅: 미션 패널 */}
+        <section className="floating-panel mission-panel">
+          <div className="mission-header">
+            <span className="mission-number font-mono">
+              MISSION #{mission.id}
+            </span>
+            {isLastMission && currentMissionIndex > 0 && (
+              <span className="mission-final">FINAL</span>
+            )}
+          </div>
+          <div className="mission-label">TARGET</div>
+          <div className="mission-target font-mono symbol-row">
+            {Array.from(mission.target).map((char, i) => {
+              const filled =
+                char === '○' ? '●' : char === '△' ? '▲' : char === '□' ? '■' : char;
+              return (
+                <span key={i} className="symbol-cell">
+                  {filled}
+                </span>
+              );
+            })}
+          </div>
+          <div className="mission-meta">
+            <span>길이: {mission.target.length}자</span>
+            <span>글자당: {formatNumber(mission.goldPerMatch)}G</span>
+          </div>
         </section>
       </main>
 
@@ -289,7 +376,9 @@ export default function Home() {
           onClick={buyMonkeys}
           disabled={!canBuy}
         >
-          <span className="buy-icon">🐒</span>
+          <span className="buy-icon" style={{ transform: 'scale(0.6)' }}>
+            <PixelMonkey iconOnly />
+          </span>
           <span className="buy-text">원숭이 +{formatNumber(unit)}</span>
           <span className="buy-cost">{formatNumber(cost)} G</span>
         </button>
