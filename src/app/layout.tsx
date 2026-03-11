@@ -1,6 +1,6 @@
+import { Press_Start_2P } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
-import { Press_Start_2P } from 'next/font/google';
 
 import './globals.css';
 import './pixel-theme.css';

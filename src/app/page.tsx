@@ -69,15 +69,15 @@ function MonkeyCard({
     ? monkey.targetString
     : monkey.targetString.slice(0, typingProgress);
 
-  const typedShapes: TypedShape[] = Array.from({ length: currentChars.length }).map(
-    (_, i) => {
-      const isMatch = currentChars[i] === target[i];
-      return {
-        shape: isMatch ? ('match' as const) : ('miss' as const),
-        symbol: currentChars[i],
-      };
-    }
-  );
+  const typedShapes: TypedShape[] = Array.from({
+    length: currentChars.length,
+  }).map((_, i) => {
+    const isMatch = currentChars[i] === target[i];
+    return {
+      shape: isMatch ? ('match' as const) : ('miss' as const),
+      symbol: currentChars[i],
+    };
+  });
 
   const typing = !monkey.showReward && typingProgress < target.length;
 
@@ -128,7 +128,7 @@ const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 3;
 const ZOOM_SENSITIVITY = 0.002;
 
-function getTouchDistance(touches: TouchList): number {
+function getTouchDistance(touches: React.TouchList | TouchList): number {
   if (touches.length < 2) return 0;
   const a = touches[0];
   const b = touches[1];
@@ -194,7 +194,10 @@ export default function Home() {
         const dist = getTouchDistance(e.touches);
         if (pinchStart.current.distance > 0) {
           const ratio = dist / pinchStart.current.distance;
-          const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pinchStart.current.scale * ratio));
+          const next = Math.min(
+            MAX_ZOOM,
+            Math.max(MIN_ZOOM, pinchStart.current.scale * ratio)
+          );
           setScale(next);
         }
         return;
@@ -238,8 +241,12 @@ export default function Home() {
         return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, s + delta * s));
       });
     };
-    document.addEventListener('wheel', onWheel, { passive: false, capture: true });
-    return () => document.removeEventListener('wheel', onWheel, { capture: true });
+    document.addEventListener('wheel', onWheel, {
+      passive: false,
+      capture: true,
+    });
+    return () =>
+      document.removeEventListener('wheel', onWheel, { capture: true });
   }, []);
 
   const pixelContainerStyle: React.CSSProperties = {
@@ -268,7 +275,11 @@ export default function Home() {
   const canBuy = gold >= cost;
 
   return (
-    <div ref={viewportRef} className="game-container" style={pixelContainerStyle}>
+    <div
+      ref={viewportRef}
+      className="game-container"
+      style={pixelContainerStyle}
+    >
       {/* Top Info Bar */}
       <header className="info-bar">
         <div className="info-item gold-display">
@@ -350,7 +361,13 @@ export default function Home() {
           <div className="mission-target font-mono symbol-row">
             {Array.from(mission.target).map((char, i) => {
               const filled =
-                char === '○' ? '●' : char === '△' ? '▲' : char === '□' ? '■' : char;
+                char === '○'
+                  ? '●'
+                  : char === '△'
+                    ? '▲'
+                    : char === '□'
+                      ? '■'
+                      : char;
               return (
                 <span key={i} className="symbol-cell">
                   {filled}
